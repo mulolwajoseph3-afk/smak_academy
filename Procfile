@@ -1,0 +1,1 @@
+web: gunicorn smak_academy.wsgi
