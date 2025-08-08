@@ -1,0 +1,585 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+</style>
+
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">Nouveau Paiement</h4>
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>
+                            <li class="breadcrumb-item active">Form Validation</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <div class="row d-flex justify-content-center">
+            <div class="col-xl-6 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <ul>
+                                {% for field, errors in form.errors.items %}
+                                {% for error in errors %}
+                                <li>{{ field }}: {{ error }}</li>
+                                {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <form method="POST" novalidate>
+                            {% csrf_token %}
+
+                            <!-- Classe -->
+                            <div class="mb-3">
+                                <label for="classe-select" class="form-label">Sélectionner une classe</label>
+                                <select class="form-select" id="classe-select" name="classe" onchange="updateEleves()">
+                                    <option value="">Sélectionner une classe</option>
+                                    {% for classe in classes %}
+                                            <option
+                                            value="{{ classe.id }}"
+                                            data-montant-cdf="{{ classe.montant|floatformat:0 }}"
+                                            data-montant-usd="{{ classe.montant_usd|floatformat:2 }}"
+                                        >
+                                            {{ classe.nom_classe }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Élève -->
+                            <div class="mb-3">
+                                <label for="eleve-input" class="form-label">Rechercher un élève</label>
+                                <input type="text" class="form-control" id="eleve-input" name="search_eleve" placeholder="Tapez le nom de l'élève" onkeyup="searchEleves()" autocomplete="off">
+                                <input type="hidden" id="eleve-id" name="eleve">
+                                <div id="eleve-results" class="list-group" style="display: none;"></div>
+                            </div>
+
+                            <!-- Type de paiement -->
+                            <div class="mb-3">
+                                <label for="id_type_paiement" class="form-label">Type de paiement</label>
+                                <select class="form-select" id="id_type_paiement" name="type_paiement" onchange="updateFormFields()">
+                                    <option value="">Sélectionner un type</option>
+                                    <option value="minerval">Minerval</option>
+                                    <option value="autre_frais">Autre frais</option>
+                                </select>
+                            </div>
+
+                            <!-- Devise -->
+                            <!-- Devise -->
+                            <div class="mb-3">
+                                <label for="devise-select" class="form-label">Devise</label>
+                                <select class="form-select" id="devise-select" name="devise" onchange="toggleMontantFields()">
+                                    <option value="cdf">Franc Congolais (CDF)</option>
+                                    <option value="usd">Dollar (USD)</option>
+                                    <option value="mixte">Mixte</option>
+                                </select>
+                            </div>
+
+                            <!-- Description autre frais -->
+                            <div class="mb-3" id="description-frais-container" style="display: none;">
+                                <label for="autre-frais-select" class="form-label">Description du frais</label>
+                                <select class="form-select" id="autre-frais-select" name="autre_frais_id" onchange="chargerMontantAutreFrais()">
+                                    <option value="">Sélectionner une description</option>
+                                    {% for frais in autres_frais %}
+                                        <option value="{{ frais.id }}" data-montant-cdf="{{ frais.montant_cdf }}" data-montant-usd="{{ frais.montant_usd }}">
+                                            {{ frais.description }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Mois + Montant -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="id_mois" class="form-label">Mois</label>
+                                        {{ form.mois }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="id_montant" class="form-label">Montant</label>
+                                        {{ form.montant }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- DEVISE MIXTE -->
+
+                            <!-- Montant en CDF -->
+                            <div class="mb-3" id="montant-cdf-field" style="display: none;">
+                                <label for="id_montant_cdf" class="form-label">Montant en Francs (CDF)</label>
+                                <input type="number" name="montant_cdf" class="form-control" id="id_montant_cdf" placeholder="Ex: 15000">
+                            </div>
+
+                            <!-- Montant en USD -->
+                            <div class="mb-3" id="montant-usd-field" style="display: none;">
+                                <label for="id_montant_usd" class="form-label">Montant en Dollars (USD)</label>
+                                <input type="number" name="montant_usd" class="form-control" id="id_montant_usd" placeholder="Ex: 5">
+                            </div>
+
+                             <!-- END DEVISE MIXTE -->
+
+                            <!-- Objet paiement (pour autre frais) -->
+                            <div class="mb-3" id="object-paiement-container" style="display: none;">
+                                <label for="id_object_paiement" class="form-label">Objet du paiement</label>
+                                <input type="text" id="id_object_paiement" class="form-control" name="object_paiement" value="autre">
+                            </div>
+
+                            <!-- Avance (pour minerval) -->
+                            <div class="mb-3" id="avance-container" style="display: none;">
+                                <label for="id_avance" class="form-label">Avance</label>
+                                <input type="number" id="id_avance" class="form-control" name="avance" placeholder="Montant de l'avance">
+                            </div>
+
+                            <!-- Reçu -->
+                            <div class="row mb-3">
+                                <label for="id_recu" class="col-sm-2 col-form-label">Reçu</label>
+                                <div class="col-sm-10">
+                                    {{ form.recu }}
+                                </div>
+                            </div>
+
+                            <button type="submit" id="btn-soumettre" class="btn btn-primary" disabled>Soumettre</button>
+                        </form>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const bouton = document.getElementById('btn-soumettre');
+
+                                // Champs à surveiller ergonomie pour l'envoie du formulaire
+                                const champs = [
+                                    'classe-select',
+                                    'eleve-id',
+                                    'id_type_paiement',
+                                    'devise-select',
+                                    'id_mois',
+                                    'id_montant'
+                                ];
+
+                                // Fonction de validation
+                                function verifierFormulaire() {
+                                    const tousRemplis = champs.every(id => {
+                                        const champ = document.getElementById(id);
+                                        return champ && champ.value.trim() !== '';
+                                    });
+
+                                    bouton.disabled = !tousRemplis;
+                                }
+
+                                // Écouter les changements
+                                champs.forEach(id => {
+                                    const champ = document.getElementById(id);
+                                    if (champ) {
+                                        champ.addEventListener('input', verifierFormulaire);
+                                        champ.addEventListener('change', verifierFormulaire);
+                                    }
+                                });
+
+                                // Initialisation
+                                verifierFormulaire();
+                            });
+                            </script>
+
+                        <script>
+                            function toggleMontantFields() {
+                                const typePaiement = document.getElementById("id_type_paiement").value;
+                                const deviseSelect = document.getElementById("devise-select");
+
+                                const montantField = document.getElementById("id_montant").parentElement.parentElement;
+                                const avanceField = document.getElementById("avance-container");
+                                const cdfField = document.getElementById("montant-cdf-field");
+                                const usdField = document.getElementById("montant-usd-field");
+
+                                // 🔄 Gestion conditionnelle de l'option "mixte"
+                                const mixteOption = [...deviseSelect.options].find(opt => opt.value === "mixte");
+                                if (typePaiement === "autre_frais") {
+                                    if (mixteOption) mixteOption.style.display = "none";
+                                    avanceField.style.display = "none";
+                                } else {
+                                    if (mixteOption) mixteOption.style.display = "block";
+                                    avanceField.style.display = "block";
+                                }
+
+                                const devise = deviseSelect.value;
+                                if (devise === "mixte") {
+                                    montantField.style.display = "none";
+                                    avanceField.style.display = "none";
+                                    cdfField.style.display = "block";
+                                    usdField.style.display = "block";
+                                } else {
+                                    montantField.style.display = "block";
+                                    cdfField.style.display = "none";
+                                    usdField.style.display = "none";
+                                }
+                            }
+
+                            document.addEventListener("DOMContentLoaded", function () {
+                                toggleMontantFields();
+                                document.getElementById("devise-select").addEventListener("change", toggleMontantFields);
+                                document.getElementById("id_type_paiement").addEventListener("change", toggleMontantFields);
+                            });
+                        </script>
+
+
+                        {% comment %} Montant devise selon classe {% endcomment %}
+                        <script>
+                            function updateMontantSelonClasseEtDevise() {
+                                const typePaiement = document.getElementById("id_type_paiement").value;
+                                const classeSelect = document.getElementById("classe-select");
+                                const devise = document.getElementById("devise-select").value;
+                                const montantField = document.getElementById("id_montant");
+
+                                if (!typePaiement || typePaiement !== "minerval") return;
+
+                                const selectedOption = classeSelect.options[classeSelect.selectedIndex];
+                                if (!selectedOption) return;
+
+                                const montantCDF = selectedOption.getAttribute("data-montant-cdf") || "0";
+                                const montantUSD = selectedOption.getAttribute("data-montant-usd") || "0";
+
+                                // 🧼 Conversion safe : on remplace la virgule par un point si nécessaire
+                                const montantFinal = (devise === "usd")
+                                    ? montantUSD.replace(",", ".")
+                                    : montantCDF.replace(",", ".");
+
+                                // ✅ Injection dans le champ montant
+                                const montantNettoye = parseFloat(montantFinal);
+                                montantField.value = isNaN(montantNettoye) ? 0 : montantNettoye.toFixed(2);
+
+                                console.log("💡 Montant défini :", montantField.value, " (devise :", devise, ")");
+                            }
+
+                            // Lier les événements
+                            document.addEventListener("DOMContentLoaded", function () {
+                                const typePaiementEl = document.getElementById("id_type_paiement");
+                                const classeSelectEl = document.getElementById("classe-select");
+                                const deviseEl = document.getElementById("devise-select");
+
+                                if (typePaiementEl && classeSelectEl && deviseEl) {
+                                    typePaiementEl.addEventListener("change", updateMontantSelonClasseEtDevise);
+                                    classeSelectEl.addEventListener("change", updateMontantSelonClasseEtDevise);
+                                    deviseEl.addEventListener("change", updateMontantSelonClasseEtDevise);
+
+                                    // Appliquer directement au chargement initial
+                                    updateMontantSelonClasseEtDevise();
+                                }
+                            });
+                        </script>
+
+                        {% comment %} #NOUVEAU SCRIPT DEVISE {% endcomment %}
+                        <script>
+                            function updateFormFields() {
+                                const type = document.getElementById("id_type_paiement").value;
+                                const descContainer = document.getElementById("description-frais-container");
+                                const objectContainer = document.getElementById("object-paiement-container");
+                                const avanceContainer = document.getElementById("avance-container");
+
+                                if (type === "autre_frais") {
+                                    descContainer.style.display = "block";
+                                    objectContainer.style.display = "block";
+                                    avanceContainer.style.display = "none";
+                                    document.getElementById("id_object_paiement").value = "autre";
+                                } else if (type === "minerval") {
+                                    descContainer.style.display = "none";
+                                    objectContainer.style.display = "none";
+                                    avanceContainer.style.display = "block";
+                                } else {
+                                    descContainer.style.display = "none";
+                                    objectContainer.style.display = "none";
+                                    avanceContainer.style.display = "none";
+                                }
+
+                                chargerMontantAutreFrais(); // Refresh montant après type switch
+                            }
+
+                            function chargerMontantAutreFrais() {
+                                const selectFrais = document.getElementById("autre-frais-select");
+                                const selected = selectFrais ? selectFrais.options[selectFrais.selectedIndex] : null;
+                                const devise = document.getElementById("devise-select").value;
+                                const montantField = document.getElementById("id_montant");
+
+                                if (selected) {
+                                    const cdf = selected.getAttribute("data-montant-cdf") || "0";
+                                    const usd = selected.getAttribute("data-montant-usd") || "0";
+                                    montantField.value = (devise === "usd") ? usd : cdf;
+                                }
+                            }
+                        </script>
+
+
+                        {% comment %} METTRE A JOUR LES AUTRES FRAIS  {% endcomment %}
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const typePaiement = document.getElementById('id_type_paiement');
+                                    const deviseSelect = document.getElementById('devise-select');
+                                    let objectPaiement = document.getElementById('id_object_paiement');
+                                    const montantInput = document.getElementById('id_montant');
+
+                                    function convertirEnSelect(inputElement) {
+                                        const select = document.createElement('select');
+                                        select.id = inputElement.id;
+                                        select.name = inputElement.name;
+                                        select.className = 'form-control';
+                                        inputElement.parentNode.replaceChild(select, inputElement);
+                                        return select;
+                                    }
+
+                                    function chargerAutreFrais(devise) {
+                                        fetch(`/get-autre-frais/?devise=${devise}`)
+                                            .then(res => res.json())
+                                            .then(data => {
+                                                if (objectPaiement.tagName !== 'SELECT') {
+                                                    objectPaiement = convertirEnSelect(objectPaiement);
+                                                }
+                                                objectPaiement.innerHTML = '';
+                                                data.frais.forEach(frais => {
+                                                    const option = document.createElement('option');
+                                                    option.value = frais.description;
+                                                    option.textContent = frais.description;
+                                                    option.dataset.montant = frais.montant;
+                                                    objectPaiement.appendChild(option);
+                                                });
+                                            });
+                                    }
+
+                                    typePaiement.addEventListener('change', () => {
+                                        if (typePaiement.value === 'autre_frais') {
+                                            const devise = deviseSelect ? deviseSelect.value : 'cdf';
+                                            chargerAutreFrais(devise);
+                                        } else {
+                                            if (objectPaiement.tagName === 'SELECT') {
+                                                const input = document.createElement('input');
+                                                input.type = 'text';
+                                                input.id = objectPaiement.id;
+                                                input.name = objectPaiement.name;
+                                                input.className = 'form-control';
+                                                objectPaiement.parentNode.replaceChild(input, objectPaiement);
+                                                objectPaiement = input;
+                                            }
+                                        }
+                                    });
+
+                                    if (deviseSelect) {
+                                        deviseSelect.addEventListener('change', () => {
+                                            if (typePaiement.value === 'autre_frais') {
+                                                chargerAutreFrais(deviseSelect.value);
+                                            }
+                                        });
+                                    }
+
+                                    document.addEventListener('change', function (e) {
+                                        if (e.target.id === 'id_object_paiement' && e.target.tagName === 'SELECT') {
+                                            const montant = e.target.options[e.target.selectedIndex].dataset.montant;
+                                            if (montantInput) montantInput.value = montant || '';
+                                        }
+                                    });
+                                });
+                            </script>
+
+
+                            {% comment %} METTRE A JOUR LE MONTANT MINERVAL D'UNE CLASSE SELON LA DEVISE {% endcomment %}
+
+                            
+
+
+                        <script>
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                            const classeSelect = document.getElementById('classe-select');
+                                            const eleveInput = document.getElementById('id_eleve');
+                                            const searchInput = document.getElementById('search-eleve');
+
+                                            classeSelect.addEventListener('change', function () {
+                                                const classeId = this.value;
+
+                                                // Réinitialiser le champ élève avec une option par défaut
+                                                eleveInput.innerHTML = '<option value="">Sélectionnez un élève</option>';
+
+                                                // Appelle une API pour obtenir les élèves de la classe sélectionnée
+                                                fetch(`/get-eleves/${classeId}/`)
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        if (Array.isArray(data)) {
+                                                            // Remplir le champ de recherche avec les options
+                                                            data.forEach(eleve => {
+                                                                const option = document.createElement('option');
+                                                                option.value = eleve.id; // Assurez-vous que l'ID de l'élève est correct
+                                                                option.textContent = eleve.nom; // Ajustez en fonction des attributs de votre modèle
+                                                                eleveInput.appendChild(option);
+                                                            });
+                                                        } else {
+                                                            console.error('Données incorrectes:', data);
+                                                        }
+                                                    })
+                                                    .catch(error => console.error('Erreur:', error));
+                                            });
+
+                                            // Gestion de l'autocomplétion
+                                            searchInput.addEventListener('input', function() {
+                                                const searchTerm = this.value.toLowerCase();
+                                                const options = eleveInput.options;
+
+                                                for (let i = 0; i < options.length; i++) {
+                                                    const option = options[i];
+                                                    option.style.display = option.text.toLowerCase().includes(searchTerm) ? 'block' : 'none';
+                                                }
+                                            });
+
+                                            // Lorsque l'utilisateur sélectionne un élève, mettre à jour le champ caché
+                                            eleveInput.addEventListener('change', function() {
+                                                searchInput.value = this.options[this.selectedIndex].text; // Met à jour le champ de recherche avec le nom sélectionné
+                                            });
+                                        });
+
+
+                        </script>
+                            
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const typePaiementSelect = document.getElementById('id_type_paiement');
+                                const objectPaiementContainer = document.getElementById('object-paiement-container');
+                                const objectPaiementInput = document.getElementById('id_object_paiement');
+                            
+                                // Lorsque le type de paiement change
+                                typePaiementSelect.addEventListener('change', function () {
+                                    const selectedType = typePaiementSelect.value;
+                            
+                                    if (selectedType === 'minerval') {
+                                        // Masquer le champ "Objet du paiement" et lui donner la valeur "minerval"
+                                        objectPaiementContainer.style.display = 'none';
+                                        objectPaiementInput.value = 'minerval';
+                                    } else {
+                                        // Afficher le champ "Objet du paiement" et effacer la valeur si autre type de paiement
+                                        objectPaiementContainer.style.display = 'block';
+                                        objectPaiementInput.value = ''; // Ou laisser l'utilisateur entrer une valeur
+                                    }
+                                });
+                            });
+                        </script>
+                            
+                            <script>
+                                function searchEleves() {
+                                    const input = document.getElementById('eleve-input');
+                                    const classeSelect = document.getElementById('classe-select');
+                                    const resultsContainer = document.getElementById('eleve-results');
+                                    
+                                    const query = input.value;
+                                    const classeId = classeSelect.value;
+                                
+                                    if (query.length < 2) { // Limite de recherche à 2 caractères
+                                        resultsContainer.style.display = 'none';
+                                        resultsContainer.innerHTML = '';
+                                        return;
+                                    }
+                                
+                                    fetch(`/search_students/?query=${query}&classe_id=${classeId}`)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            resultsContainer.innerHTML = '';
+                                            if (data.length > 0) {
+                                                data.forEach(student => {
+                                                    const item = document.createElement('div');
+                                                    item.className = 'list-group-item list-group-item-action';
+                                                    item.textContent = student.name;
+                                                    item.onclick = () => selectEleve(student.id, student.name);
+                                                    resultsContainer.appendChild(item);
+                                                });
+                                                resultsContainer.style.display = 'block';
+                                            } else {
+                                                resultsContainer.style.display = 'none';
+                                            }
+                                        });
+                                }
+                                
+                                function selectEleve(id, name) {
+                                    document.getElementById('eleve-id').value = id;  // Insérer l'ID de l'élève dans le champ caché
+                                    document.getElementById('eleve-input').value = name;  // Insérer le nom dans le champ d'affichage
+                                    document.getElementById('eleve-results').style.display = 'none';
+                                }
+
+
+                            </script>
+                                
+                        
+
+                    </div>
+                </div>
+            </div> <!-- end col -->
+        </div>
+
+
+
+        <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+
+        <!-- jQuery UI local -->
+        <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+        <script>
+            // Fonction pour mettre à jour les champs du formulaire en fonction du type de paiement
+            function updateFormFields() {
+                
+                const classeSelect = document.getElementById('classe-select');
+                const typePaiementSelect = document.getElementById('id_type_paiement');
+                const montantInput = document.getElementById('id_montant');
+                const avanceContainer = document.getElementById('avance-container');
+
+                // Si le type de paiement est "minerval" et une classe est sélectionnée
+                if (typePaiementSelect.value === 'minerval' && classeSelect.value) {
+                    // Rendre le champ montant en lecture seule
+                    montantInput.readOnly = true;
+                    
+                    // Afficher le champ d'avance si nécessaire (ex: pour les paiements partiels)
+                    avanceContainer.style.display = "block";
+
+                    // Récupérer l'ID de la classe sélectionnée
+                    const classeId = classeSelect.value;
+
+                    // Faire une requête AJAX pour récupérer le montant du minerval correspondant à la classe
+                    fetch(`/get_montant_minerval/${classeId}/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Mettre à jour le champ montant avec le montant du minerval récupéré
+                            montantInput.value = data.montant_minerval;
+                        })
+                        .catch(error => {
+                            console.error('Erreur lors de la récupération du montant:', error);
+                        });
+                } else {
+                    // Si le type de paiement n'est pas "minerval", le champ montant est éditable
+                    montantInput.readOnly = false;
+                    montantInput.value = '';  // Réinitialiser le champ pour permettre la saisie manuelle
+                    avanceContainer.style.display = "none";  // Cacher le champ d'avance
+                }
+    
+                
+
+            }
+
+        </script>
+
+
+    </div>
+</div>
+
+{% endblock %}

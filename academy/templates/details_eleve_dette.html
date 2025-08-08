@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">Détails des Dettes</h4>
+                    <h4 class="mb-sm-0">Élève : {{ eleve.nom }} {{ eleve.post_nom }} {{ eleve.prenom }}</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-center mt-4">
+            <div class="col-xl-6 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Montant Total Dû : {{ montant_total_du }} FC</h3>
+
+                        <h3>Mois Impayés</h3>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Mois</th>
+                                    <th>Montant</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for mois in details_dettere %}
+                                    <tr>
+                                        <td>{{ mois.mois }}</td>
+                                        <td>{{ mois.montant }} FC</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <button onclick="window.print()" class="btn btn-primary">🖨️ Imprimer la Liste</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "base_promo.html" %}
+{% block title %}Dashboard Promo{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-chart-line"></i> Tableau de bord</h2>
+
+<form method="POST" action="{% url 'changer_annee' %}" class="mb-4">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="annee_scolaire">
+            Année scolaire : <span class="badge badge-info">{{ annee.nom_annee }}</span>
+        </label>
+        <select name="annee_scolaire" id="annee_scolaire" class="form-control" required>
+            {% for annee_obj in annees %}
+                <option value="{{ annee_obj.id }}" {% if annee_obj.id == annee.id %}selected{% endif %}>
+                    {{ annee_obj.nom_annee }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Changer d'année</button>
+</form>
+
+<div class="row mb-4">
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <h5>Total CDF</h5>
+            <p>{{ total_cdf }} FC</p>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <h5>Total USD</h5>
+            <p>{{ total_usd }} USD</p>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <h5>Dépenses CDF</h5>
+            <p>{{ total_depenses }} FC</p>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <h5>Dépenses USD</h5>
+            <p>{{ total_depense_usd }} USD</p>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <h5>Solde Net CDF</h5>
+            <p>{{ solde_net }} FC</p>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <h5>Solde Net USD</h5>
+            <p>{{ solde_net_usd|floatformat:2 }} USD</p>
+        </div>
+    </div>
+</div>
+
+{% if alertes %}
+<div class="alert alert-warning">
+    <ul class="mb-0">
+        {% for a in alertes %}
+        <li>{{ a }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<h4 class="mt-4">💼 Répartition par comptable</h4>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Comptable</th>
+            <th>Total (CDF)</th>
+            <th>Total (USD)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in repartition_comptable %}
+        <tr>
+            <td class="text-dark">{{ item.nom }}</td>
+            <td>{{ item.total_cdf }} FC</td>
+            <td>{{ item.total_usd }} USD</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

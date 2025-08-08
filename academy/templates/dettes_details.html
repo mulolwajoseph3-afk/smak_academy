@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">Détails des Dettes</h4>
+                    <h4 class="mb-sm-0">Montant total des dettes : {{ total_dette }} FC</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-center">
+            <div class="col-xl-6 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Choisir une classe</h3>
+                        <form method="GET">
+                            <label for="classe">Sélectionner une classe :</label>
+                            <select name="classe" class="form-select" onchange="this.form.submit()">
+                                <option value="">-- Choisir une classe --</option>
+                                {% for classe in classes_concernees %}
+                                    <option value="{{ classe.id }}" {% if selected_classe == classe.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ classe.nom_classe }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if selected_classe %}
+        <div class="row d-flex justify-content-center mt-4">
+            <div class="col-xl-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Liste des Élèves en Retard - Classe {{ classe_selectionnee.nom_classe }}</h3>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Classe</th>
+                                    <th>Montant dû</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in eleves_non_payeurs %}
+                                    <tr>
+                                        <td>{{ item.eleve.nom }} {{ item.eleve.post_nom }} {{ item.eleve.prenom }}</td>
+                                        <td>{{ item.eleve.classe.nom_classe }}</td>
+                                        <td>{{ item.montant_du }} FC</td>
+                                        <td>
+                                            <a href="{% url 'details_eleve_dette' item.eleve.id %}" class="btn btn-info">Voir Détails</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

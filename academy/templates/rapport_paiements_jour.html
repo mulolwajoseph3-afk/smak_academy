@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- Titre -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">Rapport Journalier - {{ date_selected }}</h4>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            @media print {
+                body * { visibility: hidden; }
+                #tableau-a-imprimer, #tableau-a-imprimer * { visibility: visible; }
+                #tableau-a-imprimer { position: absolute; top: 0; left: 0; width: 100%; }
+            }
+        </style>
+
+        <!-- Actions -->
+        <div class="mb-3">
+            <button onclick="window.print()" class="btn btn-primary">Imprimer</button>
+            <a href="{% url 'export_rapport_journalier_excel' %}?date={{ date_selected|date:'Y-m-d' }}" class="btn btn-danger">Exporter en Excel</a>
+        </div>
+
+        <div id="tableau-a-imprimer">
+
+            <!-- ✅ Totaux du jour -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <h5>Total encaissé :</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item">💳 CDF : <strong>{{ montant_cdf|floatformat:0 }}</strong> FC</li>
+                        <li class="list-group-item">💵 USD : <strong>{{ montant_usd|floatformat:0 }}</strong> USD</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5>Dépenses du jour :</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item">📉 CDF : <strong>{{ depense_cdf|floatformat:0 }}</strong> FC</li>
+                        <li class="list-group-item">📉 USD : <strong>{{ depense_usd|floatformat:0 }}</strong> USD</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 📊 Deux colonnes : Dépenses / Paiements -->
+            <div class="row mt-4">
+
+                <!-- 💵 Paiements du jour -->
+                <div class="col-md-6">
+                    <h5 class="mb-3">💰 Détail des Paiements</h5>
+                    {% if paiements %}
+    <table class="table table-bordered table-sm">
+        <thead class="table-light">
+            <tr>
+                <th>Élève</th>
+                <th>Classe</th>
+                <th>Montant</th>
+                <th>Devise</th>
+                <th>Objet</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for paiement in paiements %}
+            <tr>
+                <td>{{ paiement.eleve.nom }} {{ paiement.eleve.post_nom }} {{ paiement.eleve.prenom }}</td>
+                <td>{{ paiement.classe }}</td>
+
+                <td>
+                    {% if paiement.object_paiement == 'frais_inscription' %}
+                        {% if paiement.devise == 'cdf' %}
+                            {{ paiement.montant_cdf_brut|floatformat:0 }}
+                        {% elif paiement.devise == 'usd' %}
+                            {{ paiement.montant_usd_brut|floatformat:0 }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    {% else %}
+                        {% if paiement.solde == 0 %}
+                            {{ paiement.montant|floatformat:0 }}
+                        {% else %}
+                            {{ paiement.avance|floatformat:0 }}
+                        {% endif %}
+                    {% endif %}
+                </td>
+
+                <td>{{ paiement.get_devise_display }}</td>
+                <td>{{ paiement.object_paiement }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="text-muted">Aucun paiement enregistré pour cette date.</p>
+                {% endif %}
+                </div>
+
+
+                <!-- 🧾 Dépenses du jour -->
+                <div class="col-md-6">
+                    <h5 class="mb-3">📉 Détail des Dépenses</h5>
+                    {% if depenses %}
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Description</th>
+                                <th>CDF</th>
+                                <th>USD</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dep in depenses %}
+                            <tr>
+                                <td>{{ dep.description }}</td>
+                                <td>{{ dep.montant|floatformat:0 }}</td>
+                                <td>{{ dep.montant_usd|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p class="text-muted">Aucune dépense enregistrée.</p>
+                    {% endif %}
+                </div>
+
+                
+            </div>
+        </div>
+
+    </div> <!-- container-fluid -->
+</div>
+{% endblock %}

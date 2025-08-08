@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- Titre principal -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">Toutes les Dépenses</h4>
+                    <div>
+                        <span class="me-4">💰 Total CDF : <strong>{{ montant_total_depenses|floatformat:0 }}</strong> FC</span>
+                        <span>💵 Total USD : <strong>{{ montant_total_depenses_usd|floatformat:0 }}</strong> USD</span>
+                    </div>
+                    <a href="{% url 'exporter_depenses_pdf' %}" class="btn btn-outline-primary">
+                        📄 Exporter en PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulaire de filtre par mois et description -->
+        <div class="row mb-4">
+            <div class="col-xl-6 mx-auto">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            {{ form.mois.label_tag }}
+                            {{ form.mois }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.description.label_tag }}
+                            {{ form.description }}
+                        </div>
+                        <div class="col-12 text-center mt-2">
+                            <button type="submit" class="btn btn-primary">Filtrer</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Message si filtre actif -->
+        {% if form.is_bound and form.is_valid %}
+            <div class="row mb-2">
+                <div class="col text-center">
+                    <p>
+                        <strong>
+                            {% if mois_nom and form.cleaned_data.description %}
+                                Dépenses pour "{{ form.cleaned_data.description.nom }}" en {{ mois_nom }}
+                            {% elif mois_nom %}
+                                Dépenses pour le mois de {{ mois_nom }}
+                            {% elif form.cleaned_data.description %}
+                                Dépenses pour "{{ form.cleaned_data.description.nom }}"
+                            {% endif %}
+                        </strong>
+                    </p>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Tableau -->
+        <div class="row d-flex justify-content-center">
+            <div class="col-xl-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Montant (CDF)</th>
+                                    <th>Montant (USD)</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for depense in depenses %}
+                                    <tr>
+                                        <td>{{ depense.description.description }}</td>
+                                        <td>{{ depense.montant|floatformat:0 }} FC</td>
+                                        <td>{{ depense.montant_usd|floatformat:0 }} USD</td>
+                                        <td>{{ depense.date_depense }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-center">Aucune dépense enregistrée.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

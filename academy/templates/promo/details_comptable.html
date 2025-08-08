@@ -1,0 +1,217 @@
+{% extends "base_promo.html" %}
+{% block title %}Détails Comptable{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-user-tie"></i> Détails : {{ comptable.nom_complet }}</h2>
+
+<!-- Statistiques -->
+<div class="row mb-4">
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <strong>Total CDF</strong><br>{{ total_cdf }} FC
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <strong>Total USD</strong><br>{{ total_usd }} USD
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <strong>Dépenses</strong><br>{{ total_depenses }} FC
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <strong>Solde Net</strong><br>{{ solde_net }} FC
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <strong>Dépenses USD</strong><br>{{ total_depense_usd }} USD
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <strong>Solde Net USD</strong><br>{{ solde_net_usd }} USD
+        </div>
+    </div>
+</div>
+
+<!-- Statistiques supplémentaires -->
+<div class="row mb-4">
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <strong>Total Élèves</strong><br>{{ total_eleves }}
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <strong>Total Classes</strong><br>{{ total_classes }}
+        </div>
+    </div>
+</div>
+
+<!-- Formulaires de filtrage -->
+<div class="row">
+    <!-- Paiements -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">🔍 Filtrer les paiements</div>
+            <div class="card-body">
+                <form method="GET">
+                    <div class="mb-3">
+                        <label for="classe" class="form-label">Classe</label>
+                        <select name="classe" class="form-select">
+                            <option value="">Toutes</option>
+                            {% for c in classes %}
+                                <option value="{{ c.id }}" {% if filtre_classe == c.id|stringformat:"s" %}selected{% endif %}>{{ c.nom_classe }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mois" class="form-label">Mois</label>
+                        <select name="mois" class="form-select">
+                            <option value="">Tous</option>
+                            {% for m in mois_noms %}
+                                <option value="{{ m }}" {% if filtre_mois == m %}selected{% endif %}>{{ m|title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="motif" class="form-label">Motif</label>
+<select name="motif" class="form-select">
+    <option value="">Tous</option>
+    {% for m in motifs_existants %}
+        <option value="{{ m }}" {% if filtre_motif == m %}selected{% endif %}>{{ m|title }}</option>
+    {% endfor %}
+</select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="recu" class="form-label">Reçu</label>
+                        <select name="recu" class="form-select">
+                            <option value="">Tous</option>
+                            <option value="True" {% if filtre_recu == "True" %}selected{% endif %}>Oui</option>
+                            <option value="False" {% if filtre_recu == "False" %}selected{% endif %}>Non</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Filtrer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dépenses -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">🔍 Filtrer les dépenses</div>
+            <div class="card-body">
+                <form method="GET">
+                    <div class="mb-3">
+                        <label for="mois_dep" class="form-label">Mois</label>
+                        <select name="mois_dep" class="form-select">
+                            <option value="">Tous</option>
+                            {% for m in mois_noms %}
+                                <option value="{{ forloop.counter }}" {% if filtre_mois_dep == forloop.counter|stringformat:"s" %}selected{% endif %}>{{ m|title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+<select name="description" class="form-select">
+    <option value="">Toutes</option>
+    {% for d in descriptions_existantes %}
+        <option value="{{ d }}" {% if filtre_description == d %}selected{% endif %}>{{ d|title }}</option>
+    {% endfor %}
+</select>
+                    </div>
+                    <button type="submit" class="btn btn-warning">Filtrer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Résultats Paiements -->
+{% if paiements %}
+<h4 class="mt-4">📄 Paiements filtrés</h4>
+<table class="table table-bordered table-striped">
+    <thead class="table-light">
+        <tr>
+            <th>Élève</th>
+            <th>Classe</th>
+            <th>Mois</th>
+            <th>Motif</th>
+            <th>Montant</th>
+            <th>Devise</th>
+            <th>Reçu</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in paiements %}
+        <tr>
+            <td>{{ p.eleve.nom }} {{ p.eleve.post_nom }}</td>
+            <td>{{ p.classe.nom_classe }}</td>
+            <td>{{ p.mois }}</td>
+            <td>{{ p.object_paiement }}</td>
+            <td>{{ p.montant }}</td>
+            <td>{{ p.devise|upper }}</td>
+            <td>{{ p.recu|yesno:"Oui,Non" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center">Aucun paiement trouvé.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+
+<!-- Résultats Dépenses -->
+{% if depenses %}
+<h4 class="mt-4">📄 Dépenses filtrées</h4>
+<table class="table table-bordered table-striped">
+    <thead class="table-light">
+        <tr>
+            <th>Description</th>
+            <th>Montant CDF</th>
+            <th>Montant USD</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for d in depenses %}
+        <tr>
+            <td>{{ d.description.description }}</td>
+            <td>{{ d.montant }}</td>
+            <td>{{ d.montant_usd }}</td>
+            <td>{{ d.date_depense|date:"d/m/Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="text-center">Aucune dépense trouvée.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<!-- Autres infos -->
+<h4 class="mt-4">📚 Classes + Minerval</h4>
+<ul class="list-group">
+    {% for c in classes %}
+    <li class="list-group-item">{{ c.nom_classe }} → {{ c.montant }} FC / {{ c.montant_usd }} USD</li>
+    {% endfor %}
+</ul>
+
+<h4 class="mt-4">💱 Taux définis</h4>
+<ul class="list-group">
+    {% for t in taux %}
+    <li class="list-group-item">1 USD = {{ t.valeur }} FC ({{ t.date_taux|date:"d/m/Y H:i" }})</li>
+    {% endfor %}
+</ul>
+
+<h4 class="mt-4">💼 Autres frais</h4>
+<ul class="list-group">
+    {% for f in autres_frais %}
+    <li class="list-group-item">{{ f.description }} : {{ f.montant_cdf }} FC / {{ f.montant_usd }} USD</li>
+    {% endfor %}
+</ul>
+{% endblock %}

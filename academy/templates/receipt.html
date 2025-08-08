@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reçu de Paiement</title>
+    <style>
+        .receipt {
+            font-family: Arial, sans-serif;
+            width: 300px;
+            border: 1px dashed #ccc;
+            padding: 20px;
+            margin: 0 auto;
+        }
+        .title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .info {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .info span {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .barcode-container {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .barcode {
+            width: 30%;
+            height: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <div class="title"><strong>{{ paiement.created_by.ecole.nom|upper }}</strong></div>
+        <div class="title">Reçu de Paiement</div>
+
+        <div class="info">
+            <span>Date : {{ paiement.date_paiement }}</span>
+            <span>Élève : {{ paiement.eleve.nom }} {{ paiement.eleve.post_nom }} {{ paiement.eleve.prenom }}</span>
+            <span>Classe : {{ paiement.eleve.classe.nom_classe }}</span>
+            <span>Mois : {{ paiement.get_mois_display }}</span>
+            <span>Motif : {{ paiement.object_paiement }}</span>
+            
+
+            {% if paiement.object_paiement == 'frais_inscription' %}
+                {% if paiement.devise == 'cdf' %}
+                    <span>Montant payé : {{ paiement.montant_cdf_brut|floatformat:0 }} FC</span>
+                {% elif paiement.devise == 'usd' %}
+                    <span>Montant payé : {{ paiement.montant_usd_brut|floatformat:0 }} USD</span>
+                {% endif %}
+            {% else %}
+                {% if paiement.solde == 0 %}
+                    <span>Montant payé : {{ paiement.montant|floatformat:0 }} {{ paiement.get_devise_display }}</span>
+                {% else %}
+                    <span>Montant payé : {{ paiement.avance|floatformat:0 }} {{ paiement.get_devise_display }}</span>
+                    <span>Solde restant : {{ paiement.solde|floatformat:0 }} {{ paiement.get_devise_display }}</span>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="footer">
+            Merci pour votre paiement!
+        </div>
+
+        <div class="barcode-container">
+            <img class="barcode" src="data:image/png;base64,{{ qr_code_image }}" alt="QR Code">
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            window.print();
+        };
+    </script>
+</body>
+</html>

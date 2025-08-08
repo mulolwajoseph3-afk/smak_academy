@@ -1,0 +1,181 @@
+
+{% extends 'base.html' %}
+
+            {% block content%}
+
+                <div class="page-content">
+                    <div class="container-fluid">
+        
+                        <!-- start page title -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                    <h4 class="mb-sm-0">Tableau de bord</h4>
+        
+                                    <div class="page-title-right">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item"><a href="javascript: void(0);">InoTech</a></li>
+                                            <li class="breadcrumb-item active">Tableau de bord</li>
+                                        </ol>
+                                    </div>
+        
+                                </div>
+                            </div>
+                        </div>
+        
+                        <form method="POST" action="{% url 'changer_annee' %}" class="mb-4">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="classe">Année Scolaire :{{ name_annee_selectionnee }}</label>
+                                <select name="annee_scolaire" id="classe" class="form-control">
+                                    <option value="">--- Sélectionnez une année ---</option>
+                                    {% for annee in annees %}
+                                        <option value="{{ annee.id }}" {% if annee.id == annee_selectionnee.id %}selected{% endif %}>{{ annee.nom_annee }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <br>
+                            <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                        </form>
+                        <!-- end page title -->
+        
+                        <div class="row">
+                            {% comment %} <div class="col-sm-6 col-lg-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h4 class="card-title text-muted">Total Garçons</h4>
+                                        <h2 class="mt-3 mb-2"><i class="mdi mdi-arrow-up text-success me-2"></i><b>{{number_man}}</b>
+                                        </h2>
+                                        <p class="text-muted mb-0 mt-3"><b></b> For this year</p>
+                                    </div>
+                                </div>
+                            </div>
+        
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="card text-center">
+                                    <div class="card-body p-t-10">
+                                        <h4 class="card-title text-muted mb-0">Total Filles</h4>
+                                        <h2 class="mt-3 mb-2"><i class="mdi mdi-arrow-up text-success me-2"></i><b>{{number_girl}}</b></h2>
+                                        <p class="text-muted mb-0 mt-3"><b></b> For this year</p>
+                                    </div>
+                                </div>
+                            </div> {% endcomment %}
+        
+                            <div class="col-sm-6 col-lg-3">
+                                <a href="{% url 'details_classe' %}" class="text-decoration-none">
+                                    <div class="card text-center hover-card">
+                                        <div class="card-body p-t-10">
+                                            <h4 class="card-title text-muted mb-0">Total Inscrit</h4>
+                                            <h2 class="mt-3 mb-2">
+                                                <i class="mdi mdi-arrow-up text-success me-2"></i>
+                                                <b>{{ number_student }}</b>
+                                            </h2>
+                                            <p class="text-muted mb-0 mt-3">For this year</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-3">
+                                <a href="{% url 'add_class' %}" class="text-decoration-none">
+                                    <div class="card text-center hover-card">
+                                        <div class="card-body p-t-10">
+                                            <h4 class="card-title text-muted mb-0">Nombre des classes</h4>
+                                            <h2 class="mt-3 mb-2">
+                                                <i class="mdi mdi-arrow-up text-success me-2"></i>
+                                                <b>{{ number_class }}</b>
+                                            </h2>
+                                            <p class="text-muted mb-0 mt-3">For this year</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+        
+                
+
+                        <div class="col-sm-6 col-lg-3">
+                            <a href="{% url 'rapport_paiements_jour' %}" class="text-decoration-none">
+                                    
+                                <div class="card text-center hover-card">
+                                    <div class="card-body p-t-10">
+                                        <h4 class="card-title text-muted mb-0">Revenu du jour</h4>
+                                        <h1 class="mt-3 mb-2">
+                                            
+                                            <b class="fs-5">{{ revenu_cdf_jour|floatformat:0 }}</b>
+                                            
+                                            <span class="mx-2 text-muted">|</span>
+                                            <b class="fs-5">${{ revenu_usd_jour|floatformat:2 }}</b>
+                                            
+                                        </h1>
+                                        
+                                    </div>
+                                </div>
+                            </a>
+
+                        </div>
+
+                        <div class="col-sm-6 col-lg-3">
+                            <a href="{% url 'rapport_paiements_jour' %}" class="text-decoration-none">
+                                    
+                                <div class="card text-center hover-card">
+                                <div class="card-body p-t-10">
+                                    <h4 class="card-title text-muted mb-0">Dépense du jour</h4>
+                                    <h1 class="mt-3 mb-2">
+                                        
+                                        <b class="fs-5">{{ depense_cdf_jour|floatformat:0 }}</b>
+                                        
+                                        <span class="mx-2 text-muted">|</span>
+                                        <b class="fs-5">${{ depense_usd_jour|floatformat:2 }}</b>
+                                        
+                                    </h1>
+                                    
+                                </div>
+                            </div>
+                            </a>
+                            
+                        </div>
+
+                        <!-- 💰 Revenu -->
+                        <div class="col-sm-6 col-lg-6">
+                            <a href="{% url 'rapport_financier' %}" class="text-decoration-none">
+                                <div class="card text-center shadow-sm hover-shadow">
+                                    <div class="card-body">
+                                        <h4 class="card-title text-muted">Total Revenu</h4>
+                                        <h2 class="mt-3 mb-2 text-dark">
+                                            <span>{{ total_revenu_cdf|floatformat:0 }} FC</span>
+                                            <span class="mx-2 text-muted">|</span>
+                                            <span>${{ total_revenu_usd|floatformat:2 }} USD</span>
+                                        </h2>
+                                        <p class="text-muted mb-0 mt-3">Montants cumulés pour l’année scolaire</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- 💸 Dépenses -->
+                        <div class="col-sm-6 col-lg-6">
+                            <a href="{% url 'rapport_financier' %}" class="text-decoration-none">
+                                <div class="card text-center shadow-sm hover-shadow">
+                                    <div class="card-body">
+                                        <h4 class="card-title text-muted">Total Dépenses</h4>
+                                        <h2 class="mt-3 mb-2 text-dark">
+                                            <span>{{ total_depense_cdf|floatformat:0 }} FC</span>
+                                            <span class="mx-2 text-muted">|</span>
+                                            <span>${{ total_depense_usd|floatformat:2 }} USD</span>
+                                        </h2>
+                                        <p class="text-muted mb-0 mt-3">Charges enregistrées pour l’année scolaire</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                            
+                    </div>
+                        <!-- end row -->
+        
+        
+        
+                    </div>
+        
+                </div>  
+        
+            {% endblock %}

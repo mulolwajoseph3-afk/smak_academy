@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">Ajoutez une nouvelle année</h4>
+                    <h4 class="mb-sm-0">Nombre d'années {{ number_year }}</h4>
+
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Add</a></li>
+                            <li class="breadcrumb-item active">New year</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+        
+        <div class="row d-flex justify-content-center">
+            <div class="col-xl-6 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="POST" novalidate>
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="id_nom" class="form-label">Nom de l'année scolaire</label>
+                                        {{ form.nom_annee }}
+                                        <div class="valid-feedback">Looks good!</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Ajouter</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Liste des années -->
+        <div class="col-sm-7 offset-1 mx-auto mt-4">
+            <h4 class="text-center alert alert-info">Année scolaire enregistrée</h4>
+            {% if annee_scolaire %}
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Nom de l'année scolaire</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for annee in annee_scolaire %}
+                    <tr>
+                        <th scope="row">{{ annee.id }}</th>
+                        <td>{{ annee.nom_annee }}</td>
+                        <td>
+                            <a href="{% url 'UpdateYear' annee.id %}" class="btn btn-primary btn-sm">Modifier</a>
+
+                            <!-- Bouton modale -->
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalSupprimer{{ annee.id }}">
+                                Supprimer
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Modale de confirmation -->
+                    <div class="modal fade" id="modalSupprimer{{ annee.id }}" tabindex="-1" aria-labelledby="modalLabel{{ annee.id }}" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header bg-warning">
+                            <h5 class="modal-title" id="modalLabel{{ annee.id }}">Confirmer la suppression</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Annuler"></button>
+                          </div>
+                          <div class="modal-body">
+                            <p>Voulez-vous vraiment supprimer l’année scolaire <strong>{{ annee.nom_annee }}</strong> ?</p>
+                          </div>
+                          <div class="modal-footer">
+                            <form method="POST" action="{% url 'DeleteYear' annee.id %}">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+                            </form>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <h4 class="text-center alert alert-warning">Aucune année enregistrée</h4>
+            {% endif %}
+        </div>
+
+    </div> <!-- container-fluid -->
+</div>
+{% endblock %}

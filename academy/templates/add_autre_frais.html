@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- Titre de la page -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">Ajoutez un nouveau frais</h4>
+                    <h4 class="mb-sm-0">Nombre des frais : {{ autres_frais.count }}</h4>
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript:void(0);">Finances</a></li>
+                            <li class="breadcrumb-item active">Autres frais</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulaire -->
+        <div class="row d-flex justify-content-center">
+            <div class="col-xl-6 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="POST" novalidate>
+                            {% csrf_token %}
+                            <div class="row">
+                                <!-- Description -->
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="id_description" class="form-label">Description du frais</label>
+                                        {{ form.description }}
+                                        {% if form.description.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.description.errors %}
+                                                    <p>{{ error }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Montant CDF -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="id_montant_cdf" class="form-label">Montant en CDF</label>
+                                        {{ form.montant_cdf }}
+                                        {% if form.montant_cdf.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.montant_cdf.errors %}
+                                                    <p>{{ error }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Montant USD -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="id_montant_usd" class="form-label">Montant en USD</label>
+                                        {{ form.montant_usd }}
+                                        {% if form.montant_usd.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.montant_usd.errors %}
+                                                    <p>{{ error }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Soumettre</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des frais enregistrés -->
+        <div class="col-sm-7 offset-1 mx-auto mt-4">
+            <h4 class="text-center alert alert-info">Autres frais enregistrés</h4>
+            {% if autres_frais %}
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Montant CDF</th>
+                        <th>Montant USD</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in autres_frais %}
+                    <tr>
+                        <td>{{ f.id }}</td>
+                        <td>{{ f.description }}</td>
+                        <td>{{ f.montant_cdf|floatformat:0 }}</td>
+                        <td>{{ f.montant_usd|floatformat:0 }}</td>
+                        <td>
+                            <a href="{% url 'UpdateAutreFrais' f.id %}" class="btn btn-primary btn-sm">Modifier</a>
+
+                            <!-- Bouton déclencheur de modale -->
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalSupprimer{{ f.id }}">
+                                Supprimer
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Modale de confirmation -->
+                    <div class="modal fade" id="modalSupprimer{{ f.id }}" tabindex="-1" aria-labelledby="modalLabel{{ f.id }}" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header bg-warning">
+                            <h5 class="modal-title" id="modalLabel{{ f.id }}">Confirmer la suppression</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Annuler"></button>
+                          </div>
+                          <div class="modal-body">
+                            <p>Voulez-vous vraiment supprimer le frais <strong>{{ f.description }}</strong> ?</p>
+                          </div>
+                          <div class="modal-footer">
+                            <form method="POST" action="{% url 'DeleteAutreFrais' f.id %}">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+                            </form>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <h5 class="text-center alert alert-warning">Aucun frais enregistré</h5>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

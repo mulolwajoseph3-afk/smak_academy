@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">Nouvelle Dépense</h4>
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript:void(0);">Finances</a></li>
+                            <li class="breadcrumb-item active">Ajouter Dépense</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <div class="row d-flex justify-content-center">
+            <div class="col-xl-6 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="POST" novalidate>
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="id_description" class="form-label">Description</label>
+                                        {{ form.description }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="id_montant" class="form-label">Montant CDF</label>
+                                        {{ form.montant }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="id_montant_usd" class="form-label">Montant USD</label>
+                                        {{ form.montant_usd }}
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Enregistrer la dépense</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- container-fluid -->
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const select = document.querySelector('#id_description');
+
+    select.addEventListener('change', function () {
+        if (select.value === 'autre') {
+            if (!document.querySelector('#id_description_autre')) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.name = 'description_autre';
+                input.id = 'id_description_autre';
+                input.className = 'form-control';
+                input.placeholder = 'Saisir une nouvelle description';
+
+                select.parentElement.replaceChild(input, select);
+                document.querySelector('label[for="id_description"]').setAttribute('for', 'id_description_autre');
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

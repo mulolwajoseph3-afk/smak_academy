@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- Titre -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">Modifier le taux de conversion</h4>
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="#">Configuration</a></li>
+                            <li class="breadcrumb-item active">Modification du taux</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulaire de modification -->
+        <div class="row d-flex justify-content-center mt-3">
+            <div class="col-xl-6 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="POST" novalidate>
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="id_valeur" class="form-label">Nouveau taux (ex: 2550)</label>
+                                {{ form.valeur }}
+                                {% if form.valeur.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.valeur.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                            <a href="{% url 'ajout_taux' %}" class="btn btn-secondary ms-2">Annuler</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

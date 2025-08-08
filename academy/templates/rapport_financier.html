@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- Titre principal -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">Rapport Financier</h4>
+                    <h4 class="mb-sm-0">Année Scolaire : {{ annee_scolaire.nom_annee }}</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bloc principal -->
+        <div class="row d-flex justify-content-center">
+            <div class="col-xl-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        
+                        <!-- 🔹 Résumé Financier multi-devise -->
+                        <h3 class="mb-4">Résumé Financier</h3>
+                        <table class="table table-bordered text-center" style="font-size: 17px;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>🔹 Catégorie</th>
+                                    <th>🇨🇩 Franc Congolais (CDF)</th>
+                                    <th>🇺🇸 Dollar Américain (USD)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Total Revenu</strong></td>
+                                    <td>{{ total_revenu|floatformat:0 }} FC</td>
+                                    <td>{{ total_revenu_usd|floatformat:0 }} USD</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total Dépenses</strong></td>
+                                    <td>{{ total_depenses|floatformat:0 }} FC</td>
+                                    <td>{{ total_depenses_usd|floatformat:0 }} USD</td>
+                                </tr>
+                                <tr class="table-success">
+                                    <td><strong>Solde Net</strong></td>
+                                    <td>{{ solde_net|floatformat:0 }} FC</td>
+                                    <td>{{ solde_net_usd|floatformat:0 }} USD</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- 🔍 Alertes -->
+                        {% if alertes %}
+                            <div class="alert alert-warning mt-4">
+                                <h5>🧠 Analyse automatique :</h5>
+                                <ul>
+                                    {% for alerte in alertes %}
+                                        <li>{{ alerte }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+
+                        <!-- 🔹 Liste des dépenses -->
+                        <h3 class="mt-5">Liste des Dépenses</h3>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Montant (CDF)</th>
+                                    <th>Montant (USD)</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for depense in depenses|slice:":3" %}
+                                    <tr>
+                                        <td>{{ depense.description }}</td>
+                                        <td>{{ depense.montant|floatformat:0 }} FC</td>
+                                        <td>{{ depense.montant_usd|floatformat:0 }} USD</td>
+                                        <td>{{ depense.date_depense }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <a href="{% url 'voir_toutes_les_depenses' %}" class="btn btn-primary">Voir Plus</a>
+
+                        <!-- 🔹 Élèves en retard -->
+                        <h3 class="mt-5">Élèves en Retard de Paiement</h3>
+                        <p>
+                            <strong>Montant total des dettes :</strong>
+                            <a href="{% url 'dettes_details' %}" class="btn btn-warning" style="font-size: 17px">{{ total_dette|floatformat:0 }} FC</a>
+                        </p>
+
+                        <!-- 🔹 Exportations -->
+                        <div class="mt-4">
+                            <a href="{% url 'export_rapport_excel' %}" class="btn btn-success">📊 Télécharger en Excel</a>
+                            <a href="{% url 'export_rapport_pdf' %}" class="btn btn-danger">📜 Télécharger en PDF</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- container-fluid -->
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content%}
+
+    <div class="page-content">
+        <div class="container-fluid">
+
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        
+                        <h4 class="mb-sm-0">Modifier l'année scolaire {{ annee.nom_annee }}</h4>
+
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Update</a></li>
+                                <li class="breadcrumb-item active">Year</li>
+                            </ol>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+            
+            <div class="row d-flex justify-content-center">
+                <div class="col-xl-6 mx-auto">
+                    <div class="card">
+                        <div class="card-body">
+                            <form method="POST" novalidate>
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="id_nom_annee" class="form-label">Nom de l'année scolaire</label>
+                                            {{ form.nom_annee }}
+                                            {% if form.nom_annee.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.nom_annee.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Modifier</button>
+                            </form>
+                        </div>
+                    </div>
+                </div> <!-- end col -->
+            </div>
+            
+        </div> <!-- container-fluid -->
+    </div>  
+
+{% endblock %}

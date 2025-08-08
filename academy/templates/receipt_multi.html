@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Reçu de Paiement Multi-Mois</title>
+    <style>
+        .receipt {
+            font-family: Arial, sans-serif;
+            width: 320px;
+            border: 1px dashed #ccc;
+            padding: 20px;
+            margin: 0 auto;
+        }
+        .title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .info, .footer {
+            font-size: 14px;
+            margin-top: 15px;
+        }
+        .info span {
+            display: block;
+            margin-bottom: 4px;
+        }
+        table {
+            width: 100%;
+            font-size: 13px;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px dashed #aaa;
+            padding: 4px 6px;
+            text-align: center;
+        }
+        .barcode-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .barcode {
+            width: 35%;
+            height: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <div class="title"><strong>{{ paiement.created_by.ecole.nom|upper }}</strong></div>
+        <div class="title">Reçu de Paiement</div>
+
+        <div class="info">
+            <span>Date : {{ paiement.date_paiement }}</span>
+            <span>Élève : {{ paiement.eleve.nom }} {{ paiement.eleve.post_nom }} {{ paiement.eleve.prenom }}</span>
+            <span>Classe : {{ paiement.eleve.classe.nom_classe }}</span>
+            {% comment %} <span>Devise : {{ paiement.get_devise_display }}</span> {% endcomment %}
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Mois</th>
+                    <th>Montant payé</th>
+                    <th>Solde restant</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in paiements %}
+                    <tr>
+                        <td>{{ p.get_mois_display }}</td>
+                        <td>{{ p.avance|floatformat:0 }} FC</td>
+                        <td>{{ p.solde|floatformat:0 }} FC</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="footer">
+            Merci pour votre paiement !
+        </div>
+
+        <div class="barcode-container">
+            <img class="barcode" src="data:image/png;base64,{{ qr_code_image }}" alt="QR Code">
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            window.print();
+        };
+    </script>
+</body>
+</html>

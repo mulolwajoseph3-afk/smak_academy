@@ -1,0 +1,521 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>InoTech</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="Themesdesign" name="author" />
+    <!-- App favicon -->
+    
+    <link rel="shortcut icon" href="{% static 'images/SQK.png' %}">
+
+    <!-- jquery.vectormap css -->
+    <link href="{% static 'libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css' %}" rel="stylesheet" type="text/css" />
+
+    <link rel="stylesheet" href="{% static 'libs/morris.js/morris.css' %}">
+
+    <!-- DataTables -->
+    <link href="{% static 'libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
+
+    <!-- Responsive datatable examples -->
+    <link href="{% static 'libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
+
+    <!-- Bootstrap Css -->
+    <link href="{% static 'css/bootstrap.min.css' %}" id="bootstrap-style" rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href="{% static 'css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="{% static 'css/app.min.css' %}" id="app-style" rel="stylesheet" type="text/css" />
+
+    <link href="{% static 'css/bootstrap.min.css' %}" id="bootstrap-style" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/app.min.css' %}" id="app-style" rel="stylesheet" type="text/css" />
+
+
+</head>
+
+    <body data-sidebar="dark">
+    
+    <!-- <body data-layout="horizontal" data-topbar="light"> -->
+
+        <!-- Begin page -->
+        <div id="layout-wrapper">
+
+            
+            
+            <header id="page-topbar">
+                <div class="navbar-header">
+                    <div class="d-flex">
+                        <!-- LOGO -->
+                        <div class="navbar-brand-box">
+                            <a href="{% url 'index' %}" class="logo logo-dark">
+                                <span class="logo-sm">
+                                    <img src="{% static 'images/SQK.png'%}" alt="logo-sm-dark" height="26">
+                                </span>
+                                <span class="logo-lg">
+                                    <img src="{% static 'images/SQK.png'%}" alt="logo-dark" height="24">
+                                </span>
+                            </a>
+        
+                            <a href="{% url 'index' %}" class="logo logo-light">
+                                <span class="logo-sm">
+                                    <img src="{% static 'images/SQK.png'%}" alt="logo-sm-light" height="26">
+                                </span>
+                                <span class="logo-lg">
+                                    <img src="{% static 'images/SQK.png'%}" alt="logo-light" height="24"> InoTech
+                                </span>
+                            </a>
+                        </div>
+        
+                        <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect" id="vertical-menu-btn">
+                            <i class="ri-menu-2-line align-middle"></i>
+                        </button>
+        
+                        <!-- App Search-->
+                        
+        
+                        
+                        
+                    </div>
+        
+                    <div class="d-flex">
+        
+                        <div class="dropdown d-inline-block d-lg-none ms-2">
+                            <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-search-dropdown"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="ri-search-line"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
+                                aria-labelledby="page-header-search-dropdown">
+                            
+                                <form class="p-3">
+                                    <div class="mb-3 m-0">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Search ...">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="submit"><i class="ri-search-line"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+        
+                        
+                        <div class="dropdown d-none d-lg-inline-block ms-1">
+                            <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
+                                <i class="mdi mdi-plus"></i>creer nouveau
+                                <i class="mdi mdi-chevron-down"></i> 
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                                <div class="px-lg-2">
+                                    <div class="row g-0">
+                                        <div class="row g-0">
+
+    <div class="col">
+        <a class="dropdown-icon-item" href="{% url 'add_class' %}">
+            <i class="fas fa-school fa-lg me-2"></i>
+            <span>Classe</span>
+        </a>
+    </div>
+
+    <div class="col">
+        <a class="dropdown-icon-item" href="{% url 'inscription' %}">
+            <i class="fas fa-user-plus fa-lg me-2"></i>
+            <span>Inscription</span>
+        </a>
+    </div>
+
+    <div class="col">
+        <a class="dropdown-icon-item" href="{% url 'ajouter_depense' %}">
+            <i class="fas fa-money-bill-wave fa-lg me-2"></i>
+            <span>Ajouter Dépense</span>
+        </a>
+    </div>
+
+    <div class="col">
+        <a class="dropdown-icon-item" href="{% url 'ajouter_autre_frais' %}">
+            <i class="fas fa-file-invoice-dollar fa-lg me-2"></i>
+            <span>Autres Frais</span>
+        </a>
+    </div>
+
+    <div class="col">
+        <a class="dropdown-icon-item" href="{% url 'ajout_taux' %}">
+            <i class="fas fa-percentage fa-lg me-2"></i>
+            <span>Ajouter Taux</span>
+        </a>
+    </div>
+
+</div>
+                                    </div>
+        
+                                    
+                                </div>
+                            </div>
+                        </div>
+        
+                        <div class="dropdown d-none d-lg-inline-block ms-1">
+                            <button type="button" class="btn header-item noti-icon waves-effect" data-toggle="fullscreen">
+                                <i class="ri-fullscreen-line"></i>
+                            </button>
+                        </div>
+        
+                        
+        
+                        <div class="dropdown d-inline-block user-dropdown">
+                            <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                
+                                <span class="d-none d-xl-inline-block ms-1">{{user.username}}</span>
+                                <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <!-- item-->
+                                
+                                {% if user.is_authenticated %}
+                                    <form action="{% url 'logout' %}" method="POST" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item text-danger" style="border: none; background: none;">
+                                            <i class="ri-shut-down-line align-middle me-1 text-danger"></i> Logout
+                                        </button>
+                                    </form>
+                                {% endif %}
+        
+                            </div>
+                        </div>
+        
+                        <div class="dropdown d-inline-block">
+                            <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">
+                                <i class="ri-settings-2-line"></i>
+                            </button>
+                        </div>
+                    
+                    </div>
+                </div>
+            </header>
+
+    <!-- ========== Left Sidebar Start ========== -->
+    <div class="vertical-menu">
+
+        <div data-simplebar class="h-100">
+
+            <!--- Sidemenu -->
+            <div id="sidebar-menu">
+                <!-- Left Menu Start -->
+                <ul class="metismenu list-unstyled" id="side-menu">
+
+                    <li>
+                        <a href="{% url 'index' %}" class="waves-effect">
+                            <i class="ri-dashboard-line"></i><span class="badge rounded-pill bg-success float-end">3</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="ri-profile-line"></i>
+                            <span>Inscription</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="false">
+                            <li><a href="{% url 'inscription' %}">nouvelle inscription</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="ri-pencil-ruler-2-line"></i>
+                            <span>Details class</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="false">
+                            <li><a href="{% url 'details_classe' %}">Liste des élèves</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="ri-bar-chart-line"></i>
+                            <span>Scolarité</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="false">
+                            <li><a href="{% url 'paiements' %}">Paiements</a></li>
+                            <li><a href="{% url 'details_paiements' %}">Details paiements</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'insolvables' %}" class=" waves-effect">
+                            <i class="ri-chat-1-line"></i>
+                            <span>Insolvables</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="ri-bar-chart-line"></i>
+                            <span>Rapports</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="false">
+                            <li><a href="{% url 'rapport_paiements_jour' %}">Journalier</a></li>
+                            <li><a href="{% url 'rapport_mensuel' %}">Mensuel</a></li>
+                            <li><a href="{% url 'rapport_annuel' %}">Annuel</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+            <!-- Sidebar -->
+        </div>
+    </div>
+    <!-- Left Sidebar End -->
+
+            
+
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        <!-- start page title -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                   
+
+                                    <div class="page-title-right">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item"><a href="javascript: void(0);">Tables</a></li>
+                                            <li class="breadcrumb-item active">Data Tables</li>
+                                        </ol>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end page title -->
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+        
+                                        
+                                        <h2 class="mt-1">Informations sur l'eleve</h2>
+
+                                        <div class="container mt-3">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <strong style="font-size: 1.25rem;">Nom Élève:</strong>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <span style="font-size: 1.25rem;">{{ st.nom }} {{ st.post_nom }} {{ st.prenom }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <strong style="font-size: 1.25rem;">Classe:</strong>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <span style="font-size: 1.25rem;">{{ st.classe.nom_classe }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <strong style="font-size: 1.25rem;">Date de Naissance:</strong>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <span style="font-size: 1.25rem;">{{ st.date_naissance }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <strong style="font-size: 1.25rem;">Sexe:</strong>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <span style="font-size: 1.25rem;">{{ st.sexe }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <strong style="font-size: 1.25rem;">Nom du Père:</strong>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <span style="font-size: 1.25rem;">{{ st.nom_pere }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <strong style="font-size: 1.25rem;">Nom de la Mère:</strong>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <span style="font-size: 1.25rem;">{{ st.nom_mere }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <strong style="font-size: 1.25rem;">Téléphone:</strong>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <span style="font-size: 1.25rem;">{{ st.telephone }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+
+                                        <style>
+                                            /* Styles d'impression */
+                                            @media print {
+                                                /* Masquer tous les éléments sauf le tableau */
+                                                body * {
+                                                    visibility: hidden; /* Cache tout */
+                                                }
+                                                
+                                                #tableau-a-imprimer, #tableau-a-imprimer * {
+                                                    visibility: visible; /* Affiche uniquement le tableau */
+                                                }
+                                                
+                                                #tableau-a-imprimer {
+                                                    position: absolute;
+                                                    top: 0;
+                                                    left: 0;
+                                                    width: 100%;
+                                                }
+                                            }
+                                            </style>
+                                    
+                                        <!-- Affichage de la liste des élèves -->
+                                        
+                                            
+                                           
+                                            <br>
+                                            <br>
+                                            <div id="tableau-a-imprimer">
+
+                                                    <h3>Paiements de l'élève pour l'année scolaire {{ st.annee_scolaire.nom_annee }}</h3>
+                                                   {% if paiements %}
+    <table id="datatable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Mois</th>
+                <th>Objet de paiement</th>
+                <th>Montant</th>
+                <th>Avance payé</th>
+                <th>Solde</th>
+                <th>Date de paiement</th>
+                <th>Imprimer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for paiement in paiements %}
+                <tr>
+                    <td>{{ paiement.mois }}</td>
+                    <td>{{ paiement.object_paiement }}</td>
+
+                    {% if paiement.object_paiement == 'frais_inscription' %}
+                        {% if paiement.devise == 'cdf' %}
+                            <td>{{ paiement.montant_cdf_brut|floatformat:0 }} CDF</td>
+                        {% elif paiement.devise == 'usd' %}
+                            <td>{{ paiement.montant_usd_brut|floatformat:0 }} USD</td>
+                        {% else %}
+                            <td>—</td>
+                        {% endif %}
+                        <td>—</td>
+                        <td>—</td>
+                    {% else %}
+                        {% if paiement.solde == 0 %}
+                            <td>{{ paiement.montant|floatformat:0 }} {{ paiement.get_devise_display }}</td>
+                            <td>{{ paiement.montant|floatformat:0 }} {{ paiement.get_devise_display }}</td>
+                            <td>0</td>
+                        {% else %}
+                            <td>{{ paiement.montant|floatformat:0 }} {{ paiement.get_devise_display }}</td>
+                            <td>{{ paiement.avance|floatformat:0 }} {{ paiement.get_devise_display }}</td>
+                            <td>{{ paiement.solde|floatformat:0 }} {{ paiement.get_devise_display }}</td>
+                        {% endif %}
+                    {% endif %}
+
+                    <td>{{ paiement.date_paiement }}</td>
+                    <td>
+                        <a href="{% url 'receipt_view' paiement_id=paiement.id %}" class="btn btn-info">
+                            Voir le reçu
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Aucun paiement trouvé pour cet élève dans l'année scolaire {{ st.annee_scolaire.nom_annee }}.</p>
+{% endif %}
+                                                
+                                                
+
+                                            </div>
+                                            
+                                            
+        
+                                    </div>
+                                </div>
+                            </div> <!-- end col -->
+                        </div> <!-- end row -->
+                        
+                    </div> <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+                
+               
+                
+            </div>
+            <!-- end main content-->
+
+        </div>
+        <!-- END layout-wrapper -->
+
+        
+
+        <!-- Right bar overlay-->
+        <div class="rightbar-overlay"></div>
+
+        <!-- JAVASCRIPT -->
+        <script src="{% static 'libs/jquery/jquery.min.js' %}"></script>
+        <script src="{% static 'libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'libs/metismenu/metisMenu.min.js' %}"></script>
+        <script src="{% static 'libs/simplebar/simplebar.min.js' %}"></script>
+        <script src="{% static 'libs/node-waves/waves.min.js' %}"></script>
+        
+        <!-- Required datatable js -->
+        <script src="{% static 'libs/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+        <!-- Buttons examples -->
+        <script src="{% static 'libs/datatables.net-buttons/js/dataTables.buttons.min.js' %}"></script>
+        <script src="{% static 'libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'libs/jszip/jszip.min.js' %}"></script>
+        <script src="{% static 'libs/pdfmake/build/pdfmake.min.js' %}"></script>
+        <script src="{% static 'libs/pdfmake/build/vfs_fonts.js' %}"></script>
+        <script src="{% static 'libs/datatables.net-buttons/js/buttons.html5.min.js' %}"></script>
+        <script src="{% static 'libs/datatables.net-buttons/js/buttons.print.min.js' %}"></script>
+        <script src="{% static 'libs/datatables.net-buttons/js/buttons.colVis.min.js' %}"></script>
+        
+        <script src="{% static 'libs/datatables.net-keytable/js/dataTables.keyTable.min.js' %}"></script>
+        <script src="{% static 'libs/datatables.net-select/js/dataTables.select.min.js' %}"></script>
+        
+        <!-- Responsive examples -->
+        <script src="{% static 'libs/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+        <script src="{% static 'libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js' %}"></script>
+        
+        <!-- Datatable init js -->
+        <script src="{% static 'js/pages/datatables.init.js' %}"></script>
+        
+        <script src="{% static 'js/app.js' %}"></script>
+        
+
+    </body>
+</html>
+

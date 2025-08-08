@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Dépenses</title>
+    <style>
+        body {
+            font-family: "DejaVu Sans", sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #000;
+        }
+        h2 {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .totaux {
+            margin-bottom: 20px;
+            text-align: right;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #777;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 10px;
+            text-align: right;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>📋 Liste des Dépenses</h2>
+
+    <div class="totaux">
+        <p>Total CDF : {{ total_cdf|floatformat:0 }} FC</p>
+        <p>Total USD : {{ total_usd|floatformat:0 }} USD</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Montant (CDF)</th>
+                <th>Montant (USD)</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for depense in depenses %}
+            <tr>
+                <td>{{ depense.description }}</td>
+                <td>{{ depense.montant|floatformat:0 }}</td>
+                <td>{{ depense.montant_usd|floatformat:0 }}</td>
+                <td>{{ depense.date_depense }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center;">Aucune dépense enregistrée.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        Rapport généré le {{ now|date:"d/m/Y" }}
+    </div>
+
+</body>
+</html>

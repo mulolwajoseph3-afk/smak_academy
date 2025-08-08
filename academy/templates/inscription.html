@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- Titre de la page -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">Nouvelle Inscription</h4>
+                    <h4 class="mb-sm-0">Nombre des élèves inscrits {{ number_student }}</h4>
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>
+                            <li class="breadcrumb-item active">Form Validation</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulaire -->
+        <div class="row d-flex justify-content-center">
+            <div class="col-xl-6 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="POST" novalidate>
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="id_nom" class="form-label">Nom</label>
+                                        {{ form.nom }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="id_post_nom" class="form-label">Post Nom</label>
+                                        {{ form.post_nom }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="id_prenom" class="form-label">Prénom</label>
+                                        {{ form.prenom }}
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="id_classe" class="form-label">Classe</label>
+                                    {{ form.classe }}
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="id_date_naissance" class="col-sm-3 col-form-label">Date de naissance</label>
+                                    <div class="col-sm-9">
+                                        {{ form.date_naissance }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="id_sexe" class="form-label">Sexe</label>
+                                        {{ form.sexe }}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="id_nom_pere" class="form-label">Nom du père</label>
+                                        {{ form.nom_pere }}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="id_nom_mere" class="form-label">Nom de la mère</label>
+                                        {{ form.nom_mere }}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="id_telephone" class="col-sm-3 col-form-label">Téléphone</label>
+                                    <div class="col-sm-9">
+                                        {{ form.telephone }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Frais d'inscription + Devise -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="id_montant_inscription" class="form-label">Frais d'inscription</label>
+                                        {{ form.montant_inscription }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="id_devise_inscription" class="form-label">Devise</label>
+                                        {{ form.devise_inscription }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Soumettre</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const deviseField = document.getElementById("id_devise_inscription");
+                    const montantField = document.getElementById("id_montant_inscription");
+
+                    deviseField.addEventListener("change", function () {
+                        const selectedDevise = this.value;
+
+                        fetch(`/get-inscription-fee/?devise=${selectedDevise}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.montant !== undefined) {
+                                    montantField.value = data.montant;
+                                } else {
+                                    montantField.value = "";
+                                }
+                            })
+                            .catch(error => {
+                                montantField.value = "";
+                                console.error("Erreur lors du chargement du montant :", error);
+                            });
+                    });
+                });
+            </script>
+    </div> <!-- container-fluid -->
+</div>
+{% endblock %}

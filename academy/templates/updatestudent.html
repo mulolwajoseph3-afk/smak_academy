@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block content%}
+
+    <div class="page-content">
+        <div class="container-fluid">
+
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    
+                        <h4 class="mb-sm-0">Modifier l'élève : {{ st.nom }} {{ st.post_nom }} {{ st.prenom }}</h4>
+
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Update</a></li>
+                                <li class="breadcrumb-item active">Student</li>
+                            </ol>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+            
+            <div class="row d-flex justify-content-center">
+                <div class="col-xl-6 mx-auto">
+                    <div class="card">
+                        <div class="card-body">
+                            <form method="POST" novalidate>
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="id_nom" class="form-label">Nom</label>
+                                            {{ form.nom }}
+                                            {% if form.nom.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.nom.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="id_post_nom" class="form-label">Post Nom</label>
+                                            {{ form.post_nom }}
+                                            {% if form.post_nom.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.post_nom.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="id_prenom" class="form-label">Prénom</label>
+                                            {{ form.prenom }}
+                                            {% if form.prenom.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.prenom.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="id_classe" class="form-label">Classe</label>
+                                        {{ form.classe }}
+                                        {% if form.classe.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.classe.errors %}
+                                                    <p>{{ error }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label for="id_date_naissance" class="col-sm-3 col-form-label">Date de naissance</label>
+                                        <div class="col-sm-10">
+                                            {{ form.date_naissance }}
+                                            {% if form.date_naissance.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.date_naissance.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="id_sexe" class="form-label">Sexe</label>
+                                            {{ form.sexe }}
+                                            {% if form.sexe.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.sexe.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="id_nom_pere" class="form-label">Nom du père</label>
+                                            {{ form.nom_pere }}
+                                            {% if form.nom_pere.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.nom_pere.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="id_nom_mere" class="form-label">Nom de la mère</label>
+                                            {{ form.nom_mere }}
+                                            {% if form.nom_mere.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.nom_mere.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label for="id_telephone" class="col-sm-4 col-form-label">Téléphone</label>
+                                        <div class="col-sm-10">
+                                            {{ form.telephone }}
+                                            {% if form.telephone.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.telephone.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Modifier</button>
+                            </form>
+                        </div>
+                    </div>
+                </div> <!-- end col -->
+            </div>
+            
+        </div> <!-- container-fluid -->
+    </div>  
+
+{% endblock %}
