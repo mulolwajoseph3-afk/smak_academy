@@ -28,9 +28,9 @@ TEMPLATES_DIRS = os.path.join(BASE_DIR,'templates')
 SECRET_KEY = 'django-insecure--eo6*+mt7b9p&8!rm8q-d+!(5w5)sw&nxgiuli4f^1h(53=vpe'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+DEBUG = False
+ALLOWED_HOSTS = ['smak-academy.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://smak-academy.up.railway.app']
 
 
 # Application definition
